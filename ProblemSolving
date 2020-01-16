@@ -1,0 +1,198 @@
+package com.srccodes.example;
+
+import java.util.HashSet;
+import java.util.Scanner;
+
+public class MagicIndex {
+	
+	public static void main(String args[]) {
+		// 1. take input from the user
+		// 2. do the processing to get the answer and print it 
+		
+		// 1. take input from the user
+		// Get the size of the array and the contents of the array
+		
+		
+		// 1.a Get the size of the array
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Enter the size of the array:");
+		
+		int arraySize;
+		
+		do {
+			arraySize = scanner.nextInt();
+			if(arraySize < 1) {
+				System.out.println("The array size entered is wrong, please enter a value greated than 0.");
+			}
+		} while (arraySize < 1);
+
+		
+		//1.b Get the contents of the array
+		int[] input = new int[arraySize];
+		System.out.println("Enter the numbers:");
+		for(int i=0;i<arraySize;i++) {
+			input[i] = scanner.nextInt(); 
+		}
+
+		System.out.println("Please enter the problem number to solve from the below options:");
+		System.out.println("1. Find the element that appears once in a sorted array where all other elements appear twice one after another. Find that element in 0(logn) complexity.");
+		System.out.println("2. A magic index in an array A[0…n-1] is defined to be an index such that A[i] = i. Given a sorted array of distinct integers, write a method to find a magic index if one exists, in an array A. FOLLOW UP: What if the values are not distinct?");
+		System.out.println("3. Given a sorted array of n integers that has been rotated an unknown number of times, write code to find an element in the array. You may assume that the array was originally sorted in increasing order.");
+		System.out.println("4. Given an array that contains numbers from 1 to n-1 and exactly 1 duplicate, find that duplicate");
+		System.out.println("5. Search an element in an array where difference between adjacent elements is 1.");
+		System.out.println("6. Given an array of numbers, split the array into two where one array contains the sum of n-1 numbers and the other array with all the n-1 elements.");
+		int questionNumber;
+	
+		do {
+			questionNumber = scanner.nextInt();
+			if((questionNumber < 0 || questionNumber > 6)) {
+				System.out.println("You have entered an invalid value, please enter a value between 1 and 6");
+			}
+		} while (questionNumber < 0 || questionNumber > 6);
+		
+		switch(questionNumber) {
+		case 1:	search(input, 0, input.length);
+				break;
+		case 2:	printMagicIndex(input);
+				break;
+		case 3:	findTheStartofIncreasingRotatedArray(input);
+				break;
+		case 4:	findTheOnlyDuplicate(input);
+				break;
+		case 5:	searchElementWithPrevAndNextDiffByOne(input);
+				break;
+		case 6:	splitTheArrayIntoTwo(input);
+				break;
+		}
+		
+// 		This is to print the content of the array and debug the input
+//		for(int i=0;i<arraySize;i++) {
+//			System.out.println(input[i]);			
+//		}
+
+	}
+	
+	public static void search(int[] arr, int low, int high) 
+    { 
+        if(low > high) 
+            return; 
+        if(low == high) 
+        { 
+            System.out.println("The required element is "+arr[low]); 
+            return; 
+        } 
+          
+        // Find the middle point 
+        int mid = (low + high)/2; 
+          
+        // If mid is even and element next to mid is 
+        // same as mid, then output element lies on 
+        // right side, else on left side 
+        if(mid % 2 == 0) 
+        { 
+            if(arr[mid] == arr[mid+1]) 
+                search(arr, mid+2, high); 
+            else
+                search(arr, low, mid); 
+        } 
+        // If mid is odd 
+        else if(mid % 2 == 1) 
+        { 
+            if(arr[mid] == arr[mid-1]) 
+                search(arr, mid+1, high); 
+            else
+                search(arr, low, mid-1); 
+        } 
+    } 
+
+	private static void splitTheArrayIntoTwo(int[] input) {
+		int sum=0;
+		for(int i=0; i<input.length; i++)
+		{
+			sum = sum+input[i];
+		}
+		for(int i=0; i<input.length; i++) 
+		{
+		    int diff = sum-input[i];
+		    for(int j=0; j<input.length; j++) 
+		    {
+		    	if(diff == input[j]) 
+		    	{
+		    		System.out.println("The only element in the one array element is "+input[j]);
+		    		return;
+		    	}	
+		    }
+		}
+		
+			
+		
+	}
+
+	private static void findTheStartofIncreasingRotatedArray(int[] input) {
+		int result=input[0];
+		for(int i=0; i<input.length-1; i++)
+		{
+			if(input[i]<input[i+1])
+			{
+				continue;	
+			}
+			else
+			{
+				result=input[i+1];
+				break;
+			}
+		}
+		System.out.println("The starting number of the increasing order is "+result);
+	}
+
+	private static void searchElementWithPrevAndNextDiffByOne(int[] input) {
+		System.out.println("Please enter the element to search for:");
+		Scanner scanner = new Scanner(System.in);
+		int elementToSearch = scanner.nextInt();
+		
+		for(int i=0; i < input.length; i++) {
+			if(input[i] == elementToSearch) {
+					boolean isPrevDiffone = false;
+					if((i-1) > -1 && (i-1)<input.length) {
+						int diff = input[i] - input[i-1];
+						if(diff == 1 || diff == -1) {
+							isPrevDiffone = true;
+						}
+					}
+					boolean isNextDiffone = false;
+					if((i+1) > -1 && (i+1)<input.length) {
+						int diff = input[i] - input[i+1];
+						if(diff == 1 || diff == -1) {
+							isNextDiffone = true;
+						}
+					}
+					if(isPrevDiffone && isNextDiffone) {
+						System.out.println("The index is " + i);
+						break;
+					}	
+			}
+		}		
+	}
+
+	private static void findTheOnlyDuplicate(int[] input) {
+		HashSet<Integer> hashSetOfvisitedNumbers = new HashSet<Integer>();
+		for(int i=0; i< input.length;i++) {
+			if(hashSetOfvisitedNumbers.contains(input[i])) {
+				System.out.println("The duplicate number in the array is: " + input[i]);
+				break;
+			} else {
+				hashSetOfvisitedNumbers.add(input[i]);
+			}
+		}
+	}
+
+	// 2.a For each element in array do what?	
+	// 	2.a.1 if each content is equal to array index print it
+	private static void printMagicIndex(int[] input) {
+		for(int i=0; i<input.length; i++) {
+			if(i == input[i]) {
+				 System.out.println("The magic index is present @:" + i);
+			}
+		}
+	}
+}
